@@ -1,18 +1,28 @@
 package com.siems.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.siems.dto.common.ApiResponse;
 import com.siems.dto.common.PageResponse;
 import com.siems.dto.warehouse.WarehouseRequest;
 import com.siems.dto.warehouse.WarehouseResponse;
 import com.siems.service.WarehouseService;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/warehouses")
@@ -49,10 +59,10 @@ public class WarehouseController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<WarehouseResponse>>> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "true") boolean activeOnly,
-            Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(warehouseService.search(keyword, activeOnly, pageable)));
-    }
+public ResponseEntity<ApiResponse<PageResponse<WarehouseResponse>>> search(
+        @RequestParam(required = false, defaultValue = "") String keyword,
+        @RequestParam(defaultValue = "true") boolean activeOnly,
+        Pageable pageable) {
+    return ResponseEntity.ok(ApiResponse.success(warehouseService.search(keyword, activeOnly, pageable)));
+}
 }

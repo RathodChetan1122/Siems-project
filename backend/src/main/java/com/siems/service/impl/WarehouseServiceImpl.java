@@ -1,5 +1,10 @@
 package com.siems.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.siems.dto.common.PageResponse;
 import com.siems.dto.warehouse.WarehouseRequest;
 import com.siems.dto.warehouse.WarehouseResponse;
@@ -11,11 +16,8 @@ import com.siems.repository.InventoryRepository;
 import com.siems.repository.UserRepository;
 import com.siems.repository.WarehouseRepository;
 import com.siems.service.WarehouseService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -96,9 +98,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     private WarehouseResponse toResponse(Warehouse warehouse) {
-        long totalItems = inventoryRepository.countByWarehouse_WarehouseId(warehouse.getWarehouseId());
-        long lowStock = inventoryRepository.countByWarehouse_WarehouseIdAndQuantityLessThanEqualReorderThreshold(warehouse.getWarehouseId());
-
+    long totalItems = inventoryRepository.countByWarehouse_WarehouseId(warehouse.getWarehouseId());
+    long lowStock = inventoryRepository.countLowStockByWarehouse(warehouse.getWarehouseId());
         return WarehouseResponse.builder()
                 .warehouseId(warehouse.getWarehouseId())
                 .name(warehouse.getName())

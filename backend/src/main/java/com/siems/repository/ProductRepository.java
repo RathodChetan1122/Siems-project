@@ -15,12 +15,23 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsBySku(String sku);
 
-    @Query("""
-           SELECT p FROM Product p
-           WHERE (cast(:category as string) IS NULL OR LOWER(p.category) = LOWER(:category))
-             AND (cast(:keyword as string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    @Query(value = """
+           SELECT p.* FROM products p
+           WHERE (COALESCE(:category, '') = ''
+                  OR LOWER(p.category) = LOWER(:category))
+             AND (COALESCE(:keyword, '') = ''
+                  OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                   OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))
-           """)
+           """,
+           countQuery = """
+           SELECT COUNT(*) FROM products p
+           WHERE (COALESCE(:category, '') = ''
+                  OR LOWER(p.category) = LOWER(:category))
+             AND (COALESCE(:keyword, '') = ''
+                  OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))
+           """,
+           nativeQuery = true)
     Page<Product> search(@Param("keyword") String keyword,
                           @Param("category") String category,
                           Pageable pageable);

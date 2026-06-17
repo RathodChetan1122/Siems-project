@@ -1,7 +1,9 @@
 package com.siems.repository;
 
-import com.siems.entity.Inventory;
-import jakarta.persistence.LockModeType;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,9 +11,9 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import com.siems.entity.Inventory;
+
+import jakarta.persistence.LockModeType;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
@@ -34,11 +36,13 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("SELECT COUNT(i) FROM Inventory i WHERE i.warehouse.warehouseId = :warehouseId")
     long countByWarehouse_WarehouseId(@Param("warehouseId") Long warehouseId);
 
-    @Query("""
-           SELECT COUNT(i) FROM Inventory i
-           WHERE i.warehouse.warehouseId = :warehouseId AND i.quantity <= i.reorderThreshold
-           """)
-    long countByWarehouse_WarehouseIdAndQuantityLessThanEqualReorderThreshold(@Param("warehouseId") Long warehouseId);
+    
+  @Query(value = """
+       SELECT COUNT(*) FROM inventory i
+       WHERE i.warehouse_id = :warehouseId
+         AND i.quantity <= i.reorder_threshold
+       """, nativeQuery = true)
+long countLowStockByWarehouse(@Param("warehouseId") Long warehouseId);
 
     @Query("SELECT COUNT(i) FROM Inventory i")
     long countTotalSkus();

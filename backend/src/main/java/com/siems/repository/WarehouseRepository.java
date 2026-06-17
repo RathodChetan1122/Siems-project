@@ -1,13 +1,14 @@
 package com.siems.repository;
 
-import com.siems.entity.Warehouse;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import com.siems.entity.Warehouse;
 
 public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
 
@@ -15,12 +16,21 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
 
     boolean existsByCode(String code);
 
-    @Query("""
-           SELECT w FROM Warehouse w
-           WHERE (cast(:keyword as string) IS NULL OR LOWER(w.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    @Query(value = """
+           SELECT w.* FROM warehouses w
+           WHERE (COALESCE(:keyword, '') = ''
+                  OR LOWER(w.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                   OR LOWER(w.location) LIKE LOWER(CONCAT('%', :keyword, '%')))
-             AND (:activeOnly = FALSE OR w.active = TRUE)
-           """)
+             AND (:activeOnly = FALSE OR w.is_active = TRUE)
+           """,
+           countQuery = """
+           SELECT COUNT(*) FROM warehouses w
+           WHERE (COALESCE(:keyword, '') = ''
+                  OR LOWER(w.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(w.location) LIKE LOWER(CONCAT('%', :keyword, '%')))
+             AND (:activeOnly = FALSE OR w.is_active = TRUE)
+           """,
+           nativeQuery = true)
     Page<Warehouse> search(@Param("keyword") String keyword,
                             @Param("activeOnly") boolean activeOnly,
                             Pageable pageable);
