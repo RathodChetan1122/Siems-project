@@ -77,7 +77,6 @@ class InventoryServiceImplTest {
             when(inventoryRepository.findForUpdate(2L, 2L)).thenReturn(Optional.of(inventory));
             when(inventoryRepository.save(any(Inventory.class))).thenReturn(inventory);
             when(inventoryMapper.toResponse(any())).thenReturn(mock(InventoryResponse.class));
-            when(lowStockAlertRepository.findByInventory_InventoryIdAndResolvedFalse(10L)).thenReturn(Optional.empty());
 
             inventoryService.stockOut(request);
 
@@ -117,7 +116,6 @@ class InventoryServiceImplTest {
             when(inventoryRepository.findForUpdate(2L, 2L)).thenReturn(Optional.of(inventory));
             when(inventoryRepository.save(any(Inventory.class))).thenReturn(inventory);
             when(inventoryMapper.toResponse(any())).thenReturn(mock(InventoryResponse.class));
-            when(lowStockAlertRepository.findByInventory_InventoryIdAndResolvedFalse(10L)).thenReturn(Optional.empty());
             when(userRepository.findByRole_RoleNameIn(List.of("INVENTORY_MANAGER", "ADMIN"))).thenReturn(List.of());
 
             inventoryService.stockOut(request);
@@ -250,7 +248,6 @@ class InventoryServiceImplTest {
         void reserveStockShouldDeductAndLog() {
             when(inventoryRepository.findForUpdate(2L, 2L)).thenReturn(Optional.of(inventory));
             when(inventoryRepository.save(any(Inventory.class))).thenReturn(inventory);
-            when(lowStockAlertRepository.findByInventory_InventoryIdAndResolvedFalse(10L)).thenReturn(Optional.empty());
 
             inventoryService.reserveStock(2L, 2L, 30);
 
