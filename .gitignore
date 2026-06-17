@@ -1,0 +1,21 @@
+# Environments
+.env
+.env.local
+.env.*
+
+# IDEs and Editors
+.idea/
+*.iml
+.vscode/
+
+# Backend (Maven/Java)
+backend/target/
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# Frontend (Node/Vite)
+frontend/node_modules/
+frontend/dist/
+
+# Docker Data Volumes
+postgres_data/
+*.log
